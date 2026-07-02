@@ -30,3 +30,9 @@ The betting lines dataset (`data/processed/betting_lines.csv`) has complete spre
 Moneyline data is only reliably available for 2020-21 and 2021-22, with ~50% coverage in 2022-23, and no coverage in 2023-24 or 2024-25.
 
 **Decision:** spread and total predictions use the full 5-season dataset. Moneyline prediction is scoped to 2020-21 through 2022-23 only, and treated as a secondary model.
+
+Injury data (`data/processed/injuries.csv`) is sourced from a pre-scraped dataset (Pro Sports Transactions, via Kaggle) due to Cloudflare protection blocking direct scraping of the original site.
+
+Coverage: 2020-21 through most of 2022-23 season only (through April 16, 2023). No injury data exists for 2023-24 or 2024-25.
+
+**Decision:** injury-based features will only be available for the seasons with coverage; this will need to be accounted for explicitly in Phase 2 feature engineering (e.g. flagging rows with no injury data available, rather than treating missing injury data as "no injuries occurred").
