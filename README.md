@@ -22,3 +22,11 @@ config/         YAML configuration
 tests/          Unit and integration tests
 logs/           Runtime logs
 ```
+
+## Known Data Limitations
+
+The betting lines dataset (`data/processed/betting_lines.csv`) has complete spread and total data across all 5 seasons (2020-21 through 2024-25).
+
+Moneyline data is only reliably available for 2020-21 and 2021-22, with ~50% coverage in 2022-23, and no coverage in 2023-24 or 2024-25.
+
+**Decision:** spread and total predictions use the full 5-season dataset. Moneyline prediction is scoped to 2020-21 through 2022-23 only, and treated as a secondary model.

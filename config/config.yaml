@@ -1,2 +1,22 @@
 # NBA Betting Engine configuration
-# Populate settings here, e.g. API keys, model params, feature flags
+
+seasons:
+  - "2020-21"
+  - "2021-22"
+  - "2022-23"
+  - "2023-24"
+  - "2024-25"
+
+nba_api:
+  rate_limit_seconds: 1.0   # pause between API calls so we don't get blocked
+  timeout_seconds: 30
+  max_retries: 3
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  log_dir: "logs"
+
+logging:
+  level: "INFO"
+  log_to_file: true
