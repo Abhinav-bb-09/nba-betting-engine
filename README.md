@@ -36,3 +36,17 @@ Injury data (`data/processed/injuries.csv`) is sourced from a pre-scraped datase
 Coverage: 2020-21 through most of 2022-23 season only (through April 16, 2023). No injury data exists for 2023-24 or 2024-25.
 
 **Decision:** injury-based features will only be available for the seasons with coverage; this will need to be accounted for explicitly in Phase 2 feature engineering (e.g. flagging rows with no injury data available, rather than treating missing injury data as "no injuries occurred").
+
+## Feature Ablation Study
+
+Tested 3 feature set variants via 3-fold chronological cross-validation (folds: 2021→2022, 2021-22→2023, 2021-23→2024; ~1,000–1,300 games per validation fold):
+
+| Feature set | Best mean ROC-AUC |
+|---|---|
+| Baseline (rolling team-form + efficiency) | 0.5164 |
+| Baseline + strength-of-schedule (SOS) | 0.5074 |
+| Baseline + SOS + rest differential + current streak | 0.5105 |
+
+All differences fall within the expected noise band at this sample size — none represent a statistically meaningful improvement over the baseline.
+
+**Decision:** per Occam's razor, proceeded with the baseline feature set (`models/baseline_xgb.json`, retrained via `tune_model_cv.py` on `feature_matrix.csv`) for Phase 4 backtesting. The SOS, rest, and streak pipeline code is retained for future reference but the additional complexity is not justified by the CV evidence.

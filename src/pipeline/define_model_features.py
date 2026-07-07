@@ -25,6 +25,8 @@ _ROLLING_FORM = [
     "rolling_pt_diff_10",
     "days_rest",
     "is_back_to_back",
+    "sos_rolling_10",
+    "current_streak",
 ]
 
 # ---------------------------------------------------------------------------
@@ -55,6 +57,14 @@ _INJURY = [
     "recent_injuries_count_home",
     "recent_injuries_count_away",
     "has_injury_data",
+]
+
+# ---------------------------------------------------------------------------
+# Game-context features — known before tip-off, not derived from rolling history.
+# rest_advantage is a single symmetric column (home − away); no suffix needed.
+# ---------------------------------------------------------------------------
+_GAME_CONTEXT = [
+    "rest_advantage",
 ]
 
 # ---------------------------------------------------------------------------
@@ -93,7 +103,7 @@ def get_model_feature_columns() -> list[str]:
     list[str]
         Ordered list of approved feature + identifier column names.
     """
-    return _ALL_ROLLING + _INJURY + _BETTING_INPUTS + _IDENTIFIERS
+    return _ALL_ROLLING + _INJURY + _GAME_CONTEXT + _BETTING_INPUTS + _IDENTIFIERS
 
 
 def get_target_column() -> str:
@@ -115,7 +125,7 @@ if __name__ == "__main__":
     from pathlib import Path
     import pandas as pd
 
-    matrix_path = Path(__file__).parents[2] / "data" / "processed" / "feature_matrix.csv"
+    matrix_path = Path(__file__).parents[2] / "data" / "processed" / "feature_matrix_v3.csv"
     print(f"Loading {matrix_path} ...")
     df = pd.read_csv(matrix_path, nrows=0)  # headers only — no need to read all rows
     matrix_cols = set(df.columns)
@@ -132,12 +142,12 @@ if __name__ == "__main__":
     print(f"\nTarget column: {target_col}")
 
     if missing:
-        print(f"\n  ERROR — {len(missing)} column(s) not found in feature_matrix.csv:")
+        print(f"\n  ERROR — {len(missing)} column(s) not found in feature_matrix_v3.csv:")
         for col in missing:
             print(f"    MISSING: {col}")
         raise SystemExit(1)
     else:
         print(
             f"\n  All {len(feature_cols)} feature columns and the target column "
-            f"verified present in feature_matrix.csv."
+            f"verified present in feature_matrix_v3.csv."
         )
