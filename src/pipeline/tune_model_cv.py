@@ -8,10 +8,10 @@ from sklearn.metrics import accuracy_score, roc_auc_score
 from src.pipeline.define_model_features import get_model_feature_columns, get_target_column
 
 PROJECT_ROOT = Path(__file__).parents[2]
-TRAIN_PATH   = PROJECT_ROOT / "data" / "processed" / "train_v3.csv"
-VAL_PATH     = PROJECT_ROOT / "data" / "processed" / "validation_v3.csv"
+TRAIN_PATH   = PROJECT_ROOT / "data" / "processed" / "train.csv"
+VAL_PATH     = PROJECT_ROOT / "data" / "processed" / "validation.csv"
 MODELS_DIR   = PROJECT_ROOT / "models"
-MODEL_PATH   = MODELS_DIR / "tuned_xgb.json"
+MODEL_PATH   = MODELS_DIR / "baseline_xgb_tuned.json"
 
 IDENTIFIER_COLS = {"GAME_ID", "GAME_DATE"}
 
@@ -70,8 +70,20 @@ def tune_model_cv() -> xgb.XGBClassifier:
     data     = pd.concat([train_df, val_df], ignore_index=True)
     print(f"  Combined: {len(data):,} rows across seasons {sorted(data['season'].unique())}")
 
-    model_cols = [c for c in get_model_feature_columns() if c not in IDENTIFIER_COLS]
-    target_col = get_target_column()
+    # Intersect whitelist with columns actually present in the loaded data so
+    # this script works correctly regardless of which feature-matrix version
+    # the splits were built from (v1 doesn't have SOS/streak/rest columns).
+    available      = set(data.columns)
+    all_whitelisted = [c for c in get_model_feature_columns() if c not in IDENTIFIER_COLS]
+    model_cols     = [c for c in all_whitelisted if c in available]
+    filtered_out   = [c for c in all_whitelisted if c not in available]
+    target_col     = get_target_column()
+
+    if filtered_out:
+        print(f"  WARNING — {len(filtered_out)} whitelisted column(s) not found in data and excluded:")
+        for col in filtered_out:
+            print(f"    FILTERED: {col}")
+    print(f"  Using {len(model_cols)} / {len(all_whitelisted)} whitelisted feature columns")
 
     # ------------------------------------------------------------------ #
     # Cross-validation grid search                                         #
