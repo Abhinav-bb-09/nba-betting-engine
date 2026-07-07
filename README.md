@@ -50,3 +50,27 @@ Tested 3 feature set variants via 3-fold chronological cross-validation (folds: 
 All differences fall within the expected noise band at this sample size — none represent a statistically meaningful improvement over the baseline.
 
 **Decision:** per Occam's razor, proceeded with the baseline feature set (`models/baseline_xgb.json`, retrained via `tune_model_cv.py` on `feature_matrix.csv`) for Phase 4 backtesting. The SOS, rest, and streak pipeline code is retained for future reference but the additional complexity is not justified by the CV evidence.
+
+## Backtest Results (2024-25 Held-Out Test Season)
+
+First-ever evaluation on the 2024-25 test season (never used in feature selection, hyperparameter tuning, or the ablation study):
+
+| Metric | Value |
+|---|---|
+| Model accuracy | 48.73% |
+| ROC-AUC | 0.4793 |
+| Majority-class baseline accuracy | 50.12% |
+
+Flat-betting simulation at standard -110 odds (breakeven win rate: 52.38%):
+
+| Strategy | Win rate | ROI |
+|---|---|---|
+| Model (baseline_xgb_tuned) | 48.73% | −6.96% |
+| Always bet home covers | 49.88% | −4.78% |
+| Always bet away covers | 50.12% | −4.31% |
+
+All three strategies cluster within a ~1.4 percentage-point band around 50%, consistent with sampling noise rather than a meaningful difference between them. The model is the weakest of the three — it learned patterns from 2021–2024 that partially inverted in 2024-25.
+
+**Conclusion:** this project did not find a profitable, statistically robust edge against NBA closing lines using the tested feature set (rolling team form, efficiency ratings, injury counts, and 3 ablated features — SOS, rest differential, streak). This result is consistent with prior research establishing NBA betting markets as highly efficient, and represents an honest, rigorously-obtained empirical finding rather than a pipeline failure.
+
+**Note on bet sizing:** Kelly criterion sizing was deliberately not used. Kelly requires a demonstrated positive expected value to size bets safely; applying it to unproven or negative edge estimates amplifies losses rather than growth. Flat betting at a fixed unit was used instead as the methodologically honest choice given the model's unproven edge.
