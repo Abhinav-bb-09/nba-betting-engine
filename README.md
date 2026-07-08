@@ -74,3 +74,26 @@ All three strategies cluster within a ~1.4 percentage-point band around 50%, con
 **Conclusion:** this project did not find a profitable, statistically robust edge against NBA closing lines using the tested feature set (rolling team form, efficiency ratings, injury counts, and 3 ablated features — SOS, rest differential, streak). This result is consistent with prior research establishing NBA betting markets as highly efficient, and represents an honest, rigorously-obtained empirical finding rather than a pipeline failure.
 
 **Note on bet sizing:** Kelly criterion sizing was deliberately not used. Kelly requires a demonstrated positive expected value to size bets safely; applying it to unproven or negative edge estimates amplifies losses rather than growth. Flat betting at a fixed unit was used instead as the methodologically honest choice given the model's unproven edge.
+
+## Docker Deployment
+
+The Docker image requires two locally-generated artifacts that are gitignored and not included in the repository:
+
+- `models/baseline_xgb_tuned.json` — the trained XGBoost model
+- `data/processed/test.csv` — the 2024-25 test split used by `GET /demo/{game_id}`
+
+If cloning fresh, run the full pipeline first (`src/pipeline/` scripts in order, then `src/pipeline/train_baseline_model.py` and `src/pipeline/tune_model_cv.py`) to regenerate these files before building the image.
+
+**Build:**
+```bash
+docker build -t nba-betting-engine .
+```
+
+**Run:**
+```bash
+docker run -p 8000:8000 nba-betting-engine
+```
+
+The API is then available at `http://localhost:8000`. Visit `/docs` for the interactive Swagger UI and `/redoc` for the full reference.
+
+**Production note:** baking model weights and data artifacts directly into the image is appropriate for a demonstration project but does not scale to production. A production deployment would pull versioned artifacts from cloud storage (S3, GCS) or a model registry (e.g. MLflow, Weights & Biases) at container startup — keeping the image itself stateless and the model version independently auditable. This is consistent with the live-feature-pipeline limitation already documented for `GET /predict`: both require production data infrastructure that is intentionally out of scope for this phase.

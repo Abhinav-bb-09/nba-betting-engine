@@ -1,0 +1,38 @@
+# Virtual environment — platform-specific binaries, not portable into the image
+venv/
+.venv/
+
+# Git history — not needed at runtime, adds hundreds of MB to build context
+.git/
+.gitignore
+
+# Raw NBA API data — collection artifacts, not used by the serving API
+data/raw/
+
+# All processed data except the single file the /demo endpoint needs.
+# Exclude everything first, then re-include test.csv with a negation rule.
+data/processed/
+!data/processed/test.csv
+
+# Runtime logs — generated at runtime, shouldn't exist in the image
+logs/
+
+# Python byte-code cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test runner cache
+.pytest_cache/
+
+# Data-collection entrypoint — not part of the serving stack
+run_collection.py
+
+# Test suite — not needed in the production image
+tests/
+
+# IDE and OS noise
+.vscode/
+.idea/
+.DS_Store
