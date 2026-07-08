@@ -1,0 +1,29 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # GitHub Actions runners are Ubuntu-based and need the same Linux OpenMP
+      # runtime (libgomp1) that the Dockerfile installs for the same reason:
+      # XGBoost requires it at import time and ubuntu-latest does not include
+      # it by default.
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgomp1
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/ -v
