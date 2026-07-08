@@ -11,6 +11,12 @@ env/
 # Raw and processed data (can be large / sensitive)
 data/raw/
 data/processed/
+# test.csv is intentionally tracked despite the exclusion above.
+# The deployed Docker image and the /demo API endpoint depend on it being
+# present in the repo so that cloud builds (e.g. Render cloning from GitHub)
+# have the file available — they don't have access to locally-generated files.
+# Same pattern used in .dockerignore.
+!data/processed/test.csv
 
 # Python cache
 __pycache__/
