@@ -96,4 +96,6 @@ docker run -p 8000:8000 nba-betting-engine
 
 The API is then available at `http://localhost:8000`. Visit `/docs` for the interactive Swagger UI and `/redoc` for the full reference.
 
+**Verified build and run:** the image was built end-to-end in ~126 s (14/14 steps). The `libgomp1` apt step resolves XGBoost's OpenMP dependency inside the container — the same class of issue hit during Phase 3 local development on macOS (resolved then via `brew install libomp`). A live container was confirmed against `/health` and `/demo/{game_id}`, returning identical responses to the local dev server; the model path resolved correctly to `/app/models/baseline_xgb_tuned.json`, confirming filesystem isolation.
+
 **Production note:** baking model weights and data artifacts directly into the image is appropriate for a demonstration project but does not scale to production. A production deployment would pull versioned artifacts from cloud storage (S3, GCS) or a model registry (e.g. MLflow, Weights & Biases) at container startup — keeping the image itself stateless and the model version independently auditable. This is consistent with the live-feature-pipeline limitation already documented for `GET /predict`: both require production data infrastructure that is intentionally out of scope for this phase.
