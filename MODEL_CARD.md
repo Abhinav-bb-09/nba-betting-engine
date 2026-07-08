@@ -1,5 +1,7 @@
 # NBA Spread Prediction — Model Card
 
+**Live API:** https://nba-betting-engine.onrender.com/docs (may take 30–60s to wake up on first request — free tier)
+
 Predicts whether the NBA home team covers the closing point spread.
 → Full documentation: [README.md](README.md)
 

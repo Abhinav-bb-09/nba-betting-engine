@@ -1,5 +1,7 @@
 # NBA Betting Engine
 
+**Live API:** https://nba-betting-engine.onrender.com/docs (may take 30–60s to wake up on first request — free tier)
+
 A data pipeline and modeling engine for NBA betting analysis.
 
 ## Setup
