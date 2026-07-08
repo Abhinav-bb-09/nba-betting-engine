@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.utils.feature_helpers import leakage_safe_rolling_mean
+
 PROJECT_ROOT = Path(__file__).parents[2]
 BASE_PATH    = PROJECT_ROOT / "data" / "processed" / "feature_base_v3.csv"
 OUT_PATH     = PROJECT_ROOT / "data" / "processed" / "feature_matrix.csv"
@@ -122,12 +124,12 @@ def build_efficiency_features() -> pd.DataFrame:
     # but cannot know it at prediction time.
     g = long_df.groupby("team", sort=False)
 
-    long_df["rolling_ortg_5"]   = g["ortg_game"].transform(lambda x: x.shift(1).rolling(5).mean())
-    long_df["rolling_ortg_10"]  = g["ortg_game"].transform(lambda x: x.shift(1).rolling(10).mean())
-    long_df["rolling_drtg_5"]   = g["drtg_game"].transform(lambda x: x.shift(1).rolling(5).mean())
-    long_df["rolling_drtg_10"]  = g["drtg_game"].transform(lambda x: x.shift(1).rolling(10).mean())
-    long_df["rolling_ts_pct_5"] = g["ts_pct_game"].transform(lambda x: x.shift(1).rolling(5).mean())
-    long_df["rolling_ts_pct_10"]= g["ts_pct_game"].transform(lambda x: x.shift(1).rolling(10).mean())
+    long_df["rolling_ortg_5"]    = g["ortg_game"].transform(leakage_safe_rolling_mean,   5)
+    long_df["rolling_ortg_10"]   = g["ortg_game"].transform(leakage_safe_rolling_mean,  10)
+    long_df["rolling_drtg_5"]    = g["drtg_game"].transform(leakage_safe_rolling_mean,   5)
+    long_df["rolling_drtg_10"]   = g["drtg_game"].transform(leakage_safe_rolling_mean,  10)
+    long_df["rolling_ts_pct_5"]  = g["ts_pct_game"].transform(leakage_safe_rolling_mean,  5)
+    long_df["rolling_ts_pct_10"] = g["ts_pct_game"].transform(leakage_safe_rolling_mean, 10)
 
     # ------------------------------------------------------------------ #
     # 5. Pivot back to wide and merge onto main table                      #

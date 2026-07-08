@@ -11,6 +11,7 @@ fastjsonschema==2.21.2
 h11==0.16.0
 httptools==0.8.0
 idna==3.18
+iniconfig==2.3.0
 joblib==1.5.3
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
@@ -28,9 +29,12 @@ numpy==2.5.0
 packaging==26.2
 pandas==3.0.3
 platformdirs==4.10.0
+pluggy==1.6.0
 protobuf==7.35.1
 pydantic==2.13.4
 pydantic_core==2.46.4
+Pygments==2.20.0
+pytest==9.1.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-slugify==8.0.4

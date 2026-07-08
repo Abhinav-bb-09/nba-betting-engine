@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.utils.feature_helpers import leakage_safe_rolling_mean
+
 PROJECT_ROOT = Path(__file__).parents[2]
 BASE_PATH = PROJECT_ROOT / "data" / "processed" / "feature_base.csv"
 OUT_PATH  = PROJECT_ROOT / "data" / "processed" / "feature_base_v2.csv"
@@ -88,10 +90,10 @@ def build_rolling_features() -> pd.DataFrame:
     # the shift, game N's own outcome would be included in its features,
     # which is data leakage — the model would see the answer at train time
     # but not at prediction time.
-    long_df["rolling_win_pct_5"]  = g["win"].transform(lambda x: x.shift(1).rolling(5).mean())
-    long_df["rolling_win_pct_10"] = g["win"].transform(lambda x: x.shift(1).rolling(10).mean())
-    long_df["rolling_pt_diff_5"]  = g["pt_diff"].transform(lambda x: x.shift(1).rolling(5).mean())
-    long_df["rolling_pt_diff_10"] = g["pt_diff"].transform(lambda x: x.shift(1).rolling(10).mean())
+    long_df["rolling_win_pct_5"]  = g["win"].transform(leakage_safe_rolling_mean,  5)
+    long_df["rolling_win_pct_10"] = g["win"].transform(leakage_safe_rolling_mean, 10)
+    long_df["rolling_pt_diff_5"]  = g["pt_diff"].transform(leakage_safe_rolling_mean,  5)
+    long_df["rolling_pt_diff_10"] = g["pt_diff"].transform(leakage_safe_rolling_mean, 10)
 
     # diff() gives NaT for the first game of each team — intentional.
     # We want null, not 0, so no fillna here.
