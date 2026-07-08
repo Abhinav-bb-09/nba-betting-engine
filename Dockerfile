@@ -2,6 +2,16 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
+# XGBoost requires an OpenMP runtime at import time.  This project already hit
+# the macOS equivalent of this issue (libomp via Homebrew) during Phase 3 local
+# development.  python:3.13-slim does not include the Linux equivalent (libgomp1)
+# by default — installing it here prevents the same class of failure inside the
+# container.  The rm -rf /var/lib/apt/lists/* at the end removes the package
+# manager's cache after install, keeping the image smaller; this is standard
+# Docker practice for any apt-get step.
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy requirements.txt before copying source code.
 # Docker builds layers in order and caches each one.  If a layer's inputs
 # haven't changed, Docker reuses the cached result and skips that step.
